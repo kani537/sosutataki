@@ -1,0 +1,5 @@
+/build
+/.vscode
+sosutataki
+.clang-format
+compile_commands.json
