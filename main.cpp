@@ -35,6 +35,7 @@ void Main() {
   Font diffFont(Scene::Size().x / 30);
   const Audio audioCorrect(U"./Quiz-Correct_Answer01-1.mp3");
   const Audio audioWrong(U"./Quiz-Wrong_Buzzer02-2.mp3");
+  const Array<Audio> BGM = {Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./hard.m4a")};
 
   Stopwatch stopwatch{StartImmediately::Yes};
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"},
@@ -65,6 +66,7 @@ void Main() {
     score = 0;
     leftTime = 60;
     nextPrimes(primes, diff);
+    BGM[diff - 1].play(2s);
 
     // game
     while (System::Update()) {
@@ -94,6 +96,7 @@ void Main() {
       if (leftTime - stopwatch.s() < 0)
         break;
     }
+    BGM[diff - 1].stop(2s);
 
     // result menu
     ClearPrint();
