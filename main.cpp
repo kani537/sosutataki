@@ -31,7 +31,7 @@ void nextPrimes(Array<int64> &primes, int diff) {
 
 void Main() {
   Window::SetStyle(WindowStyle::Sizable);
-  Font font(Scene::Size().x / 20);
+  Font font(Scene::Size().x / 20, Typeface::Bold);
   Font diffFont(Scene::Size().x / 30);
   const Audio audioCorrect(U"./Quiz-Correct_Answer01-1.mp3");
   const Audio audioWrong(U"./Quiz-Wrong_Buzzer02-2.mp3");
@@ -71,13 +71,14 @@ void Main() {
     // game
     while (System::Update()) {
       if (Scene::Size().x / 20 != font.fontSize())
-        font = Font(Scene::Size().x / 20);
+        font = Font(Scene::Size().x / 20, Typeface::Bold);
 
       ClearPrint();
       Print << leftTime - stopwatch.s();
 
+      Rect(0, 0, ((double) (leftTime - stopwatch.sF()) / 60) * Scene::Size().x, 10).draw(leftTime - stopwatch.s() < 10 ? Palette::Red : Palette::Green);
       for (size_t i = 1; i <= primes.size(); i++)
-        font(primes[i - 1]).draw(Arg::center(Scene::Size().x / (primes.size() + 1) * i, Scene::Size().y / 2));
+        font(primes[i - 1]).draw(sin(stopwatch.sF() * 10) * 7 + 40, Arg::center(Scene::Size().x / (primes.size() + 1) * i, Scene::Size().y / 2));
 
       for (size_t i = 0; i < primes.size(); i++)
         if (Input(InputDeviceType::Keyboard, 0x31 + i).down() && i < primes.size()) {
