@@ -32,8 +32,7 @@ void Main() {
   const Audio audioCorrect(U"./Quiz-Correct_Answer01-1.mp3");
   const Audio audioWrong(U"./Quiz-Wrong_Buzzer02-2.mp3");
   const Array<Audio> BGM = {Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./hard.m4a")};
-  const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"},
-                          results = {U"初心者", U"中級者", U"上級者", U"神"};
+  const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
   int64 prime = 2;
   int diff = 1, score = 0;
@@ -79,6 +78,7 @@ void Main() {
         int baseSize = Scene::Size().x / (diff * 2 + 3);
         double animeSize = sin(stopwatch.sF() * 5) * 7;
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
+        font(score).draw(baseSize + animeSize - 50, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize + animeSize));
 
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
@@ -108,7 +108,6 @@ void Main() {
 
       font(U"あなたのスコアは", score, U"!!").draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 4));
       font(diffs[diff - 1], U"モード").draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
-      font(results[2]).draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 2 + font.fontSize()));
 
       if (SimpleGUI::Button(U"End", Vec2{Scene::Size().x / 3, Scene::Size().y / 4 * 3}))
         System::Exit();
