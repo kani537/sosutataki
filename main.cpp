@@ -1,5 +1,6 @@
 #include <Siv3D.hpp>
-constexpr int32 leftTimeDefault = 60;
+constexpr int32 gameTime = 60;
+constexpr int32 onePrimeTime = 3;
 
 bool isPrime(int64 n) {
   for (int64 i = 2; i * i <= n; i++)
@@ -41,7 +42,7 @@ void Main() {
 
   int64 prime = 2;
   int diff = 1, score = 0;
-  int32 leftTime = leftTimeDefault;
+  int32 leftTime = gameTime;
 
   while (System::Update()) {
     // init
@@ -63,7 +64,7 @@ void Main() {
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
-    leftTime = leftTimeDefault;
+    leftTime = gameTime;
     nextPrime(prime, diff);
 
     // game
@@ -73,15 +74,15 @@ void Main() {
 
       Stopwatch tmp{StartImmediately::Yes};
 
-      while (System::Update() && tmp.s() < 3) {
+      while (System::Update() && tmp.s() < onePrimeTime) {
         ClearPrint();
         Print << leftTime - stopwatch.s();
 
-        double progress = (double)(leftTime - stopwatch.sF()) / leftTimeDefault;
+        double progress = (double)(leftTime - stopwatch.sF()) / gameTime;
         Rect(0, 0, progress * Scene::Size().x, 10).draw(HSV{120 - 120 * (1. - progress), 0.6, 0.8});
         int baseSize = Scene::Size().x / (diff * 2 + 3);
         double animeSize = sin(stopwatch.sF() * 5) * 7;
-        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * 120_deg, 360_deg - tmp.sF() * 120_deg, 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
+        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
         font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
         font(score).draw(baseSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize - animeSize));
