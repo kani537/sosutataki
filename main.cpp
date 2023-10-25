@@ -31,7 +31,6 @@ void Main() {
   Font diffFont(Scene::Size().x / 30);
   const Audio audioCorrect(U"./Quiz-Correct_Answer01-1.mp3");
   const Audio audioWrong(U"./Quiz-Wrong_Buzzer02-2.mp3");
-  const Array<Audio> BGM = {Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./easy.m4a"), Audio(U"./hard.m4a")};
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
   int64 prime = 2;
@@ -60,7 +59,6 @@ void Main() {
     score = 0;
     leftTime = 60;
     nextPrime(prime, diff);
-    BGM[diff - 1].play(2s);
 
     // game
     while (System::Update()) {
@@ -77,8 +75,9 @@ void Main() {
         Rect(0, 0, progress * Scene::Size().x, 10).draw(progress < 0.1 ? Palette::Red : Palette::Green);
         int baseSize = Scene::Size().x / (diff * 2 + 3);
         double animeSize = sin(stopwatch.sF() * 5) * 7;
-        font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
-        font(score).draw(baseSize + animeSize - 50, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize + animeSize));
+        font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
+        font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
+        font(score).draw(baseSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize - animeSize));
 
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
@@ -98,7 +97,6 @@ void Main() {
       if (leftTime - stopwatch.s() < 0)
         break;
     }
-    BGM[diff - 1].stop(2s);
 
     // result manu
     ClearPrint();
