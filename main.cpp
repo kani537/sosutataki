@@ -75,6 +75,7 @@ void Main() {
         Rect(0, 0, progress * Scene::Size().x, 10).draw(progress < 0.1 ? Palette::Red : Palette::Green);
         int baseSize = Scene::Size().x / (diff * 2 + 3);
         double animeSize = sin(stopwatch.sF() * 5) * 7;
+        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * 120_deg, 360_deg - tmp.sF() * 120_deg, 10, 10, HSV{120 - tmp.sF() * 40, 0.8, 0.7});
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
         font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
         font(score).draw(baseSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize - animeSize));
@@ -85,8 +86,10 @@ void Main() {
             nextPrime(prime, diff);
             score++;
             break;
-          } else
+          } else {
             audioWrong.playOneShot();
+            score--;
+          }
         }
 
         if (leftTime - stopwatch.s() < 0)
