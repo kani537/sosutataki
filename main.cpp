@@ -1,23 +1,20 @@
 #include <Siv3D.hpp>
 
-bool isPrime(int64 n)
-{
+bool isPrime(int64 n) {
   for (int64 i = 2; i * i <= n; i++)
     if (!(n % i))
       return false;
   return true;
 }
 
-int64 pow10(int n)
-{
+int64 pow10(int n) {
   int64 ret = 1;
   for (int i = 0; i < n; i++)
     ret *= 10;
   return ret;
 }
 
-void nextPrime(int64 &prime, int diff)
-{
+void nextPrime(int64 &prime, int diff) {
   auto p = Random<int>(0, 10);
   prime = Random<int64>(pow10(diff), pow10(diff + 1));
   if (p <= 3)
@@ -28,8 +25,7 @@ void nextPrime(int64 &prime, int diff)
       ;
 }
 
-void Main()
-{
+void Main() {
   Window::SetStyle(WindowStyle::Sizable);
   Font font(Scene::Size().x / 10, Typeface::Bold);
   Font diffFont(Scene::Size().x / 30);
@@ -43,20 +39,16 @@ void Main()
   int diff = 1, score = 0;
   int32 leftTime = 60;
 
-  while (System::Update())
-  {
+  while (System::Update()) {
     // init
-    while (System::Update())
-    {
+    while (System::Update()) {
       if (Scene::Size().x / 30 != diffFont.fontSize())
         diffFont = Font(Scene::Size().x / 30);
 
       bool flag = false;
-      for (size_t i = 1; i <= diffs.size(); i++)
-      {
+      for (size_t i = 1; i <= diffs.size(); i++) {
         diffFont(diffs[i - 1]).draw(Arg::center(Scene::Size().x / (diffs.size() + 1) * i, Scene::Size().y / 2));
-        if (Input(InputDeviceType::Keyboard, 0x30 + i).down())
-        {
+        if (Input(InputDeviceType::Keyboard, 0x30 + i).down()) {
           diff = i;
           flag = true;
           break;
@@ -72,15 +64,13 @@ void Main()
     BGM[diff - 1].play(2s);
 
     // game
-    while (System::Update())
-    {
+    while (System::Update()) {
       if (Scene::Size().x / 10 != font.fontSize())
         font = Font(Scene::Size().x / 10, Typeface::Bold);
 
       Stopwatch tmp{StartImmediately::Yes};
 
-      while (System::Update() && tmp.s() < 3)
-      {
+      while (System::Update() && tmp.s() < 3) {
         ClearPrint();
         Print << leftTime - stopwatch.s();
 
@@ -90,16 +80,13 @@ void Main()
         double animeSize = sin(stopwatch.sF() * 5) * 7;
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
 
-        if (KeyEnter.down())
-        {
-          if (isPrime(prime))
-          {
+        if (KeyEnter.down()) {
+          if (isPrime(prime)) {
             audioCorrect.playOneShot();
             nextPrime(prime, diff);
             score++;
             break;
-          }
-          else
+          } else
             audioWrong.playOneShot();
         }
 
@@ -115,8 +102,7 @@ void Main()
 
     // result manu
     ClearPrint();
-    while (System::Update())
-    {
+    while (System::Update()) {
       if (Scene::Size().x / 20 != font.fontSize())
         font = Font(Scene::Size().x / 20);
 
