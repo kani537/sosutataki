@@ -1,4 +1,5 @@
 #include <Siv3D.hpp>
+constexpr int32 leftTimeDefault = 60;
 
 bool isPrime(int64 n) {
   for (int64 i = 2; i * i <= n; i++)
@@ -16,8 +17,13 @@ int64 pow10(int n) {
 
 void nextPrime(int64 &prime, int diff) {
   auto p = Random<int>(0, 10);
+  auto grothendieck = Random<int>(0, 1000);
   prime = Random<int64>(pow10(diff), pow10(diff + 1));
-  if (p <= 3)
+  if (grothendieck <= 5) {
+    prime = 57;
+    return;
+  }
+  if (p <= 4)
     while (!isPrime(++prime))
       ;
   else
@@ -35,7 +41,7 @@ void Main() {
 
   int64 prime = 2;
   int diff = 1, score = 0;
-  int32 leftTime = 60;
+  int32 leftTime = leftTimeDefault;
 
   while (System::Update()) {
     // init
@@ -57,7 +63,7 @@ void Main() {
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
-    leftTime = 60;
+    leftTime = leftTimeDefault;
     nextPrime(prime, diff);
 
     // game
@@ -71,11 +77,11 @@ void Main() {
         ClearPrint();
         Print << leftTime - stopwatch.s();
 
-        double progress = (double)(leftTime - stopwatch.sF()) / 60;
-        Rect(0, 0, progress * Scene::Size().x, 10).draw(progress < 0.1 ? Palette::Red : Palette::Green);
+        double progress = (double)(leftTime - stopwatch.sF()) / leftTimeDefault;
+        Rect(0, 0, progress * Scene::Size().x, 10).draw(HSV{120 - 120 * (1. - progress), 0.6, 0.8});
         int baseSize = Scene::Size().x / (diff * 2 + 3);
         double animeSize = sin(stopwatch.sF() * 5) * 7;
-        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * 120_deg, 360_deg - tmp.sF() * 120_deg, 10, 10, HSV{120 - tmp.sF() * 40, 0.8, 0.7});
+        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * 120_deg, 360_deg - tmp.sF() * 120_deg, 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
         font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
         font(score).draw(baseSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize - animeSize));
@@ -83,7 +89,6 @@ void Main() {
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
             audioCorrect.playOneShot();
-            nextPrime(prime, diff);
             score++;
             break;
           } else {
@@ -95,6 +100,7 @@ void Main() {
         if (leftTime - stopwatch.s() < 0)
           break;
       }
+
       nextPrime(prime, diff);
 
       if (leftTime - stopwatch.s() < 0)
