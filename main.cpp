@@ -53,13 +53,13 @@ void nextPrime(int64 &prime, int diff) {
     return;
   }
 
-  if (diff == 1)
+  if (diff == 0)
     prime = Random<int64>(0, 50);
-  if (diff == 2)
+  if (diff == 1)
     prime = Random<int64>(0, 100);
-  if (diff == 3)
+  if (diff == 2)
     prime = Random<int64>(100, 1000);
-  if (diff == 4)
+  if (diff == 3)
     prime = Random<int64>(1000, 10000);
 
   if (p <= 4)
@@ -73,7 +73,6 @@ void nextPrime(int64 &prime, int diff) {
 void Main() {
   Window::SetStyle(WindowStyle::Sizable);
   Font font(Scene::Size().x / 10, Typeface::Bold);
-  Font diffFont(Scene::Size().x / 30);
   const Array<Audio> audioCorrect = {Audio(U"./Quiz-Correct_Answer01-1.mp3"), Audio(U"./special_correct.m4a")};
   const Array<Audio> audioWrong = {Audio(U"./Quiz-Wrong_Buzzer02-2.mp3"), Audio(U"./special_wrong.m4a")};
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
@@ -83,6 +82,7 @@ void Main() {
   int32 leftTime = gameTime;
   bool special = false;
   int32 onePrimeTime = 3;
+  int32 fontSize = 10;
 
   Effect effect;
 
@@ -92,14 +92,13 @@ void Main() {
     ClearPrint();
     special = false;
     while (System::Update()) {
-      if (Scene::Size().x / 30 != diffFont.fontSize())
-        diffFont = Font(Scene::Size().x / 30);
+      fontSize = Scene::Size().x / 30;
 
       bool flag = false;
       for (size_t i = 1; i <= diffs.size(); i++) {
-        diffFont(diffs[i - 1]).draw(Arg::center(Scene::Size().x / (diffs.size() + 1) * i, Scene::Size().y / 2));
+        font(diffs[i - 1]).draw(fontSize, Arg::center(Scene::Size().x / (diffs.size() + 1) * i, Scene::Size().y / 2));
         if (Input(InputDeviceType::Keyboard, 0x30 + i).down()) {
-          diff = i;
+          diff = i - 1;
           flag = true;
           break;
         }
@@ -113,18 +112,15 @@ void Main() {
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
-    if (diff <= 2)
+    if (diff < 2)
       onePrimeTime = 3;
-    else if (diff <= 4)
+    else if (diff < 4)
       onePrimeTime = 3;
     leftTime = gameTime;
     nextPrime(prime, diff);
 
     // game
     while (System::Update()) {
-      if (Scene::Size().x / 10 != font.fontSize())
-        font = Font(Scene::Size().x / 10, Typeface::Bold);
-
       Stopwatch tmp{StartImmediately::Yes};
       double leftVibration = -1;
       int vibration = defaultVibration;
@@ -138,12 +134,12 @@ void Main() {
 
         double progress = (double)(leftTime - stopwatch.sF()) / gameTime;
         Rect(0, 0, progress * Scene::Size().x, 10).draw(HSV{120 - 120 * (1. - progress), 0.6, 0.8});
-        int baseSize = Scene::Size().x / (diff * 2 + 3);
+        fontSize = Scene::Size().x / ((diff + 10) / 2);
         double animeSize = sin(stopwatch.sF() * 5) * vibration;
-        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
-        font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
-        font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
-        font(score).draw(baseSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize - animeSize));
+        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), fontSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
+        font(prime).draw(fontSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
+        font(U"score").draw((fontSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize / 2.));
+        font(score).draw(fontSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize - animeSize));
 
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
@@ -179,11 +175,8 @@ void Main() {
     // result manu
     ClearPrint();
     while (System::Update()) {
-      if (Scene::Size().x / 20 != font.fontSize())
-        font = Font(Scene::Size().x / 20);
-
       font(U"あなたのスコアは", score, U"!!").draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 4));
-      font(diffs[diff - 1], U"モード").draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
+      font(diffs[diff], U"モード").draw(Arg::center(Scene::Size().x / 2, Scene::Size().y / 2));
 
       if (SimpleGUI::Button(U"End", Vec2{Scene::Size().x / 3, Scene::Size().y / 4 * 3}))
         System::Exit();
