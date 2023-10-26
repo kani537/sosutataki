@@ -3,6 +3,35 @@ constexpr int32 gameTime = 60;
 constexpr int32 onePrimeTime = 3;
 constexpr int defaultVibration = 7;
 
+struct Particle {
+  Vec2 start;
+
+  Vec2 velocity;
+};
+
+struct Spark : IEffect {
+  Array<Particle> m_particles;
+
+  explicit Spark(const Vec2 &start)
+      : m_particles(50) {
+    for (auto &particle : m_particles) {
+      particle.start = start + RandomVec2(10.0);
+
+      particle.velocity = Vec2{Random<int>(-50, 50), Random<int>(-50, 50)} * Random(10.0);
+    }
+  }
+
+  bool update(double t) override {
+    for (const auto &particle : m_particles) {
+      const Vec2 pos = particle.start + particle.velocity * t + 0.5 * t * t * Vec2{0, 240};
+
+      Triangle{pos, 16.0, (pos.x * 5_deg)}.draw(HSV{pos.y - 40, (1.0 - t)});
+    }
+
+    return (t < 1.0);
+  }
+};
+
 bool isPrime(int64 n) {
   for (int64 i = 2; i * i <= n; i++)
     if (!(n % i))
@@ -44,6 +73,8 @@ void Main() {
   int64 prime = 2;
   int diff = 1, score = 0;
   int32 leftTime = gameTime;
+
+  Effect effect;
 
   while (System::Update()) {
     // init
@@ -92,6 +123,7 @@ void Main() {
 
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
+            effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
             audioCorrect.playOneShot();
             score++;
             break;
@@ -102,6 +134,8 @@ void Main() {
             score--;
           }
         }
+
+        effect.update();
 
         if (1 <= tmp.sF() - leftVibration)
           vibration = defaultVibration;
