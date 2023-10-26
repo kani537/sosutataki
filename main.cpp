@@ -1,6 +1,5 @@
 #include <Siv3D.hpp>
 constexpr int32 gameTime = 60;
-constexpr int32 onePrimeTime = 3;
 constexpr int defaultVibration = 7;
 
 struct Particle {
@@ -49,11 +48,20 @@ int64 pow10(int n) {
 void nextPrime(int64 &prime, int diff) {
   auto p = Random<int>(0, 10);
   auto grothendieck = Random<int>(0, 1000);
-  prime = Random<int64>(pow10(diff), pow10(diff + 1));
   if (grothendieck <= 5) {
     prime = 57;
     return;
   }
+
+  if (diff == 1)
+    prime = Random<int64>(0, 50);
+  if (diff == 2)
+    prime = Random<int64>(0, 100);
+  if (diff == 3)
+    prime = Random<int64>(100, 1000);
+  if (diff == 4)
+    prime = Random<int64>(1000, 10000);
+
   if (p <= 4)
     while (!isPrime(++prime))
       ;
@@ -66,18 +74,23 @@ void Main() {
   Window::SetStyle(WindowStyle::Sizable);
   Font font(Scene::Size().x / 10, Typeface::Bold);
   Font diffFont(Scene::Size().x / 30);
-  const Audio audioCorrect(U"./Quiz-Correct_Answer01-1.mp3");
-  const Audio audioWrong(U"./Quiz-Wrong_Buzzer02-2.mp3");
+  const Array<Audio> audioCorrect = {Audio(U"./Quiz-Correct_Answer01-1.mp3"), Audio(U"./special_correct.m4a")};
+  const Array<Audio> audioWrong = {Audio(U"./Quiz-Wrong_Buzzer02-2.mp3"), Audio(U"./special_wrong.m4a")};
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
   int64 prime = 2;
   int diff = 1, score = 0;
   int32 leftTime = gameTime;
+  bool special = false;
+  int32 onePrimeTime = 3;
 
   Effect effect;
 
   while (System::Update()) {
     // init
+  INIT:
+    ClearPrint();
+    special = false;
     while (System::Update()) {
       if (Scene::Size().x / 30 != diffFont.fontSize())
         diffFont = Font(Scene::Size().x / 30);
@@ -91,11 +104,19 @@ void Main() {
           break;
         }
       }
+
+      if (Key0.down())
+        special = true;
+
       if (flag)
         break;
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
+    if (diff <= 2)
+      onePrimeTime = 3;
+    else if (diff <= 4)
+      onePrimeTime = 3;
     leftTime = gameTime;
     nextPrime(prime, diff);
 
@@ -109,6 +130,9 @@ void Main() {
       int vibration = defaultVibration;
 
       while (System::Update() && tmp.s() < onePrimeTime) {
+        if (Key0.pressed())
+          goto INIT;
+
         ClearPrint();
         Print << leftTime - stopwatch.s();
 
@@ -124,11 +148,11 @@ void Main() {
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
             effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
-            audioCorrect.playOneShot();
+            audioCorrect[special].playOneShot();
             score++;
             break;
           } else {
-            audioWrong.playOneShot();
+            audioWrong[special].playOneShot();
             vibration += defaultVibration * 10;
             leftVibration = tmp.sF();
             score--;
