@@ -1,6 +1,7 @@
 #include <Siv3D.hpp>
 constexpr int32 gameTime = 60;
 constexpr int32 onePrimeTime = 3;
+constexpr int defaultVibration = 7;
 
 bool isPrime(int64 n) {
   for (int64 i = 2; i * i <= n; i++)
@@ -73,6 +74,8 @@ void Main() {
         font = Font(Scene::Size().x / 10, Typeface::Bold);
 
       Stopwatch tmp{StartImmediately::Yes};
+      double leftVibration = -1;
+      int vibration = defaultVibration;
 
       while (System::Update() && tmp.s() < onePrimeTime) {
         ClearPrint();
@@ -81,7 +84,7 @@ void Main() {
         double progress = (double)(leftTime - stopwatch.sF()) / gameTime;
         Rect(0, 0, progress * Scene::Size().x, 10).draw(HSV{120 - 120 * (1. - progress), 0.6, 0.8});
         int baseSize = Scene::Size().x / (diff * 2 + 3);
-        double animeSize = sin(stopwatch.sF() * 5) * 7;
+        double animeSize = sin(stopwatch.sF() * 5) * vibration;
         Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), baseSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
         font(prime).draw(baseSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
         font(U"score").draw((baseSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + baseSize / 2.));
@@ -94,9 +97,16 @@ void Main() {
             break;
           } else {
             audioWrong.playOneShot();
+            vibration += defaultVibration * 10;
+            leftVibration = tmp.sF();
             score--;
           }
         }
+
+        if (1 <= tmp.sF() - leftVibration)
+          vibration = defaultVibration;
+        else
+          vibration = (vibration * 9 + defaultVibration) / 10;
 
         if (leftTime - stopwatch.s() < 0)
           break;
