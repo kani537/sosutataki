@@ -32,6 +32,8 @@ struct Spark : IEffect {
 };
 
 bool isPrime(int64 n) {
+  if(n == 1)
+      return false;
   for (int64 i = 2; i * i <= n; i++)
     if (!(n % i))
       return false;
