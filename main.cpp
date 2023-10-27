@@ -112,7 +112,14 @@ void Main() {
         }
       }
 
-      if (Key0.down()) special = true;
+      if (Key0.down()) {
+        special = !special;
+        if (special) {
+          Scene::SetBackground(Color(U"#0a0929"));
+        } else {
+          Scene::SetBackground(Scene::DefaultBackgroundColor);
+        }
+      }
 
       if (flag) break;
     }
