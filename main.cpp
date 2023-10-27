@@ -161,13 +161,13 @@ void Main() {
           if (isPrime(prime)) {
             effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
             audioCorrect.playOneShot();
-            score++;
+            score+=10;
             break;
           } else {
             audioWrong.playOneShot();
             vibration += defaultVibration * 10;
             leftVibration = tmp.sF();
-            score--;
+            score-=10;
           }
 
           if (special) {
@@ -199,7 +199,7 @@ void Main() {
 
       if (SimpleGUI::Button(U"End", Vec2{Scene::Size().x / 3, Scene::Size().y / 4 * 3}))
         System::Exit();
-      if (SimpleGUI::Button(U"Next Game", Vec2{Scene::Size().x / 3 * 2, Scene::Size().y / 4 * 3}) || KeyEnter.down())
+      if (SimpleGUI::Button(U"Next Game", Vec2{Scene::Size().x / 3 * 2, Scene::Size().y / 4 * 3}) || Key0.down())
         break;
     }
   }
