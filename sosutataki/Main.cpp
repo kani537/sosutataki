@@ -74,23 +74,14 @@ void Main() {
 
 	const Array<Array<Array<Audio>>> specialAudios =
 	{
-	  {
-		{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/oyaganaiteruyo.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		{Audio(Resource(U"example/dekiteatarimae.mp3"))}
-	  },
-	  {
-		{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/konnnanomodekinaino.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		{Audio(Resource(U"example/dekiteatarimae.mp3")), Audio(Resource(U"example/maakonnnamonkana.mp3"))}
-	  },
-	  {
-		{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		{Audio(Resource(U"example/yaruyan.mp3")), Audio(Resource(U"example/maakonnnamonkana.mp3"))}
-	  },
-	  {
-		{Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		{Audio(Resource(U"example/kimihanpanaitte.mp3"))}
-	  }
-	};
+		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/oyaganaiteruyo.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+		 {Audio(Resource(U"example/dekiteatarimae.mp3"))}},
+		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/konnnanomodekinaino.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+		 {Audio(Resource(U"example/dekiteatarimae.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))}},
+		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+		 {Audio(Resource(U"example/yaruyan.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))}},
+		{{Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+		 {Audio(Resource(U"example/kimihanpanaitte.mp3")), Audio(Resource(U"example/yaruyan.mp3"))}} };
 
 	const Array<StringView> diffs = { U"EASY", U"NORMAL", U"HARD", U"INSANE" };
 
@@ -121,7 +112,15 @@ void Main() {
 				}
 			}
 
-			if (Key0.down()) special = true;
+			if (Key0.down()) {
+				special = !special;
+				if (special) {
+					Scene::SetBackground(Color(U"#0a0929"));
+				}
+				else {
+					Scene::SetBackground(Scene::DefaultBackgroundColor);
+				}
+			}
 
 			if (flag) break;
 		}
@@ -161,18 +160,18 @@ void Main() {
 					if (isPrime(prime)) {
 						effect.add<Spark>(Vec2{ Scene::Size().x / 2, Scene::Size().y / 3 });
 						audioCorrect.playOneShot();
-						const int audiosCount = specialAudios[diff][isPrime(prime)].size() - 1;
+						const int audiosCount = specialAudios[diff][1].size() - 1;
 						if (special) specialAudios[diff][1][Random<int>(audiosCount)].playOneShot();
-						score++;
+						score += 10;
 						break;
 					}
 					else {
 						audioWrong.playOneShot();
-						const int audiosCount = specialAudios[diff][isPrime(prime)].size() - 1;
-						if(special) specialAudios[diff][0][Random<int>(audiosCount)].playOneShot();
+						const int audiosCount = specialAudios[diff][0].size() - 1;
+						if (special) specialAudios[diff][0][Random<int>(audiosCount)].playOneShot();
 						vibration += defaultVibration * 10;
 						leftVibration = tmp.sF();
-						score--;
+						score -= 10;
 					}
 				}
 
@@ -199,7 +198,7 @@ void Main() {
 
 			if (SimpleGUI::Button(U"End", Vec2{ Scene::Size().x / 3, Scene::Size().y / 4 * 3 }))
 				System::Exit();
-			if (SimpleGUI::Button(U"Next Game", Vec2{ Scene::Size().x / 3 * 2, Scene::Size().y / 4 * 3 }))
+			if (SimpleGUI::Button(U"Next Game", Vec2{ Scene::Size().x / 3 * 2, Scene::Size().y / 4 * 3 }) || Key0.down())
 				break;
 		}
 	}
