@@ -73,24 +73,15 @@ void Main() {
   const Audio audioWrong = Audio(U"./Quiz-Wrong_Buzzer02-2.mp3");
 
   const Array<Array<Array<Audio>>> specialAudios =
-  {
-    {
-      {Audio(U"./sosunigate.m4a"), Audio(U"./oyaganaiteruyo.m4a"), Audio(U"./dasa.m4a")},
-      {Audio(U"./dekiteatarimae.m4a")}
-    },
-    {
-      {Audio(U"./sosunigate.m4a"), Audio(U"./konnnanomodekinaino.m4a"), Audio(U"./dasa.m4a")},
-      {Audio(U"./dekiteatarimae.m4a"), Audio(U"./maakonnnamonkana.m4a")}
-    },
-    {
-      {Audio(U"./sosunigate.m4a"), Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
-      {Audio(U"./yaruyan.m4a"), Audio(U"./maakonnnamonkana.m4a")}
-    },
-    {
-      {Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
-      {Audio(U"./kimihanpanaitte.m4a")}
-    }
-  };
+      {
+          {{Audio(U"./sosunigate.m4a"), Audio(U"./oyaganaiteruyo.m4a"), Audio(U"./dasa.m4a")},
+           {Audio(U"./dekiteatarimae.m4a")}},
+          {{Audio(U"./sosunigate.m4a"), Audio(U"./konnnanomodekinaino.m4a"), Audio(U"./dasa.m4a")},
+           {Audio(U"./dekiteatarimae.m4a"), Audio(U"./maakonnnamonka.m4a")}},
+          {{Audio(U"./sosunigate.m4a"), Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
+           {Audio(U"./yaruyan.m4a"), Audio(U"./maakonnnamonka.m4a")}},
+          {{Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
+           {Audio(U"./kimihanpanaitte.m4a")}}};
 
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
@@ -161,18 +152,17 @@ void Main() {
           if (isPrime(prime)) {
             effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
             audioCorrect.playOneShot();
-            score+=10;
+            const int audiosCount = specialAudios[diff][1].size() - 1;
+            if (special) specialAudios[diff][1][Random<int>(audiosCount)].playOneShot();
+            score += 10;
             break;
           } else {
             audioWrong.playOneShot();
+            const int audiosCount = specialAudios[diff][0].size() - 1;
+            if (special) specialAudios[diff][0][Random<int>(audiosCount)].playOneShot();
             vibration += defaultVibration * 10;
             leftVibration = tmp.sF();
-            score-=10;
-          }
-
-          if (special) {
-            const int audiosCount = specialAudios[diff][isPrime(prime)].size() - 1;
-            specialAudios[diff][isPrime(prime)][Random<int>(audiosCount)].playOneShot();
+            score -= 10;
           }
         }
 
