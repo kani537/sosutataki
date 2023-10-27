@@ -89,7 +89,6 @@ void Main() {
   int diff = 1, score = 0;
   int32 leftTime = gameTime;
   bool special = false;
-	Scene::SetBackground(Scene::DefaultBackgroundColor);
   int32 onePrimeTime = 3;
   int32 fontSize = 10;
 
@@ -100,6 +99,7 @@ void Main() {
   INIT:
     ClearPrint();
     special = false;
+	  Scene::SetBackground(Scene::DefaultBackgroundColor);
     while (System::Update()) {
       fontSize = Scene::Size().x / 30;
 
