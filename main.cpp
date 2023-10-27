@@ -67,7 +67,7 @@ void nextPrime(int64 &prime, int diff) {
 }
 
 void Main() {
-  Window::SetStyle(WindowStyle::Sizable);
+  Window::SetFullscreen(true);
   Font font(Scene::Size().x / 10, Typeface::Bold);
   const Audio audioCorrect = Audio(U"./Quiz-Correct_Answer01-1.mp3");
   const Audio audioWrong = Audio(U"./Quiz-Wrong_Buzzer02-2.mp3");
