@@ -74,14 +74,14 @@ void Main() {
 
   const Array<Array<Array<Audio>>> specialAudios =
       {
-          {{Audio(U"./sosunigate.m4a"), Audio(U"./oyaganaiteruyo.m4a"), Audio(U"./dasa.m4a")},
-           {Audio(U"./dekiteatarimae.m4a")}},
-          {{Audio(U"./sosunigate.m4a"), Audio(U"./konnnanomodekinaino.m4a"), Audio(U"./dasa.m4a")},
-           {Audio(U"./dekiteatarimae.m4a"), Audio(U"./maakonnnamonka.m4a")}},
-          {{Audio(U"./sosunigate.m4a"), Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
-           {Audio(U"./yaruyan.m4a"), Audio(U"./maakonnnamonka.m4a")}},
-          {{Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
-           {Audio(U"./kimihanpanaitte.m4a")}}};
+          {{Audio(U"./sosunigate.mp3"), Audio(U"./oyaganaiteruyo.mp3"), Audio(U"./dasa.mp3")},
+           {Audio(U"./dekiteatarimae.mp3")}},
+          {{Audio(U"./sosunigate.mp3"), Audio(U"./konnnanomodekinaino.mp3"), Audio(U"./dasa.mp3")},
+           {Audio(U"./dekiteatarimae.mp3"), Audio(U"./maakonnnamonka.mp3")}},
+          {{Audio(U"./sosunigate.mp3"), Audio(U"./kiminidekiruwakenai.mp3"), Audio(U"./dasa.mp3")},
+           {Audio(U"./yaruyan.mp3"), Audio(U"./maakonnnamonka.mp3")}},
+          {{Audio(U"./kiminidekiruwakenai.mp3"), Audio(U"./dasa.mp3")},
+           {Audio(U"./kimihanpanaitte.mp3"), Audio(U"./yaruyan.mp3")}}};
 
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
