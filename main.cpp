@@ -11,18 +11,19 @@ struct Particle {
 struct Spark : IEffect {
   Array<Particle> m_particles;
 
-  explicit Spark(const Vec2 &start)
-      : m_particles(50) {
+  explicit Spark(const Vec2 &start) : m_particles(50) {
     for (auto &particle : m_particles) {
       particle.start = start + RandomVec2(10.0);
 
-      particle.velocity = Vec2{Random<int>(-50, 50), Random<int>(-50, 50)} * Random(10.0);
+      particle.velocity =
+          Vec2{Random<int>(-50, 50), Random<int>(-50, 50)} * Random(10.0);
     }
   }
 
   bool update(double t) override {
     for (const auto &particle : m_particles) {
-      const Vec2 pos = particle.start + particle.velocity * t + 0.5 * t * t * Vec2{0, 240};
+      const Vec2 pos =
+          particle.start + particle.velocity * t + 0.5 * t * t * Vec2{0, 240};
 
       Triangle{pos, 16.0, (pos.x * 5_deg)}.draw(HSV{pos.y - 40, (1.0 - t)});
     }
@@ -32,18 +33,15 @@ struct Spark : IEffect {
 };
 
 bool isPrime(int64 n) {
-  if(n == 1)
-      return false;
+  if (n == 1) return false;
   for (int64 i = 2; i * i <= n; i++)
-    if (!(n % i))
-      return false;
+    if (!(n % i)) return false;
   return true;
 }
 
 int64 pow10(int n) {
   int64 ret = 1;
-  for (int i = 0; i < n; i++)
-    ret *= 10;
+  for (int i = 0; i < n; i++) ret *= 10;
   return ret;
 }
 
@@ -55,14 +53,10 @@ void nextPrime(int64 &prime, int diff) {
     return;
   }
 
-  if (diff == 0)
-    prime = Random<int64>(0, 50);
-  if (diff == 1)
-    prime = Random<int64>(0, 100);
-  if (diff == 2)
-    prime = Random<int64>(100, 1000);
-  if (diff == 3)
-    prime = Random<int64>(1000, 10000);
+  if (diff == 0) prime = Random<int64>(0, 50);
+  if (diff == 1) prime = Random<int64>(0, 100);
+  if (diff == 2) prime = Random<int64>(100, 1000);
+  if (diff == 3) prime = Random<int64>(1000, 10000);
 
   if (p <= 4)
     while (!isPrime(++prime))
@@ -75,8 +69,29 @@ void nextPrime(int64 &prime, int diff) {
 void Main() {
   Window::SetStyle(WindowStyle::Sizable);
   Font font(Scene::Size().x / 10, Typeface::Bold);
-  const Array<Audio> audioCorrect = {Audio(U"./Quiz-Correct_Answer01-1.mp3"), Audio(U"./special_correct.m4a")};
-  const Array<Audio> audioWrong = {Audio(U"./Quiz-Wrong_Buzzer02-2.mp3"), Audio(U"./special_wrong.m4a")};
+  const Audio audioCorrect = Audio(U"./Quiz-Correct_Answer01-1.mp3");
+  const Audio audioWrong = Audio(U"./Quiz-Wrong_Buzzer02-2.mp3");
+
+  const Array<Array<Array<Audio>>> specialAudios =
+  {
+    {
+      {Audio(U"./sosunigate.m4a"), Audio(U"./oyaganaiteruyo.m4a"), Audio(U"./dasa.m4a")},
+      {Audio(U"./dekiteatarimae.m4a")}
+    },
+    {
+      {Audio(U"./sosunigate.m4a"), Audio(U"./konnnanomodekinaino.m4a"), Audio(U"./dasa.m4a")},
+      {Audio(U"./dekiteatarimae.m4a"), Audio(U"./maakonnnamonkana.m4a")}
+    },
+    {
+      {Audio(U"./sosunigate.m4a"), Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
+      {Audio(U"./yaruyan.m4a"), Audio(U"./maakonnnamonkana.m4a")}
+    },
+    {
+      {Audio(U"./kiminidekiruwakenai.m4a"), Audio(U"./dasa.m4a")},
+      {Audio(U"./kimihanpanaitte.m4a")}
+    }
+  };
+
   const Array<StringView> diffs = {U"EASY", U"NORMAL", U"HARD", U"INSANE"};
 
   int64 prime = 2;
@@ -106,11 +121,9 @@ void Main() {
         }
       }
 
-      if (Key0.down())
-        special = true;
+      if (Key0.down()) special = true;
 
-      if (flag)
-        break;
+      if (flag) break;
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
@@ -128,8 +141,7 @@ void Main() {
       int vibration = defaultVibration;
 
       while (System::Update() && tmp.s() < onePrimeTime) {
-
-        if (SimpleGUI::Button(U"End Game", Vec2{Scene::Size().x - 150, 10})||Key0.pressed()){
+        if (SimpleGUI::Button(U"End Game", Vec2{Scene::Size().x - 150, 10}) || Key0.pressed()) {
           goto INIT;
         }
 
@@ -148,14 +160,19 @@ void Main() {
         if (KeyEnter.down()) {
           if (isPrime(prime)) {
             effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
-            audioCorrect[special].playOneShot();
+            audioCorrect.playOneShot();
             score++;
             break;
           } else {
-            audioWrong[special].playOneShot();
+            audioWrong.playOneShot();
             vibration += defaultVibration * 10;
             leftVibration = tmp.sF();
             score--;
+          }
+
+          if (special) {
+            const int audiosCount = specialAudios[diff][isPrime(prime)].size() - 1;
+            specialAudios[diff][isPrime(prime)][Random<int>(audiosCount)].playOneShot();
           }
         }
 
@@ -166,14 +183,12 @@ void Main() {
         else
           vibration = (vibration * 9 + defaultVibration) / 10;
 
-        if (leftTime - stopwatch.s() < 0)
-          break;
+        if (leftTime - stopwatch.s() < 0) break;
       }
 
       nextPrime(prime, diff);
 
-      if (leftTime - stopwatch.s() < 0)
-        break;
+      if (leftTime - stopwatch.s() < 0) break;
     }
 
     // result manu
