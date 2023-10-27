@@ -99,6 +99,7 @@ void Main() {
 	INIT:
 		ClearPrint();
 		special = false;
+		Scene::SetBackground(Scene::DefaultBackgroundColor);
 		while (System::Update()) {
 			fontSize = Scene::Size().x / 30;
 
