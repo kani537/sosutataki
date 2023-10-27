@@ -128,8 +128,10 @@ void Main() {
       int vibration = defaultVibration;
 
       while (System::Update() && tmp.s() < onePrimeTime) {
-        if (Key0.pressed())
+
+        if (SimpleGUI::Button(U"End Game", Vec2{Scene::Size().x - 150, 10})||Key0.pressed()){
           goto INIT;
+        }
 
         ClearPrint();
         Print << leftTime - stopwatch.s();
