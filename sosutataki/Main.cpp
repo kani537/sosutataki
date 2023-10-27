@@ -115,7 +115,7 @@ void Main() {
 			if (Key0.down()) {
 				special = !special;
 				if (special) {
-					Scene::SetBackground(Color(U"#0a0929"));
+					Scene::SetBackground(Color(U"#26103b"));
 				}
 				else {
 					Scene::SetBackground(Scene::DefaultBackgroundColor);
