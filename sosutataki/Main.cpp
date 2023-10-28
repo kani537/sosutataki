@@ -71,8 +71,8 @@ void nextPrime(int64& prime, int diff) {
 void Main() {
 	Window::SetFullscreen(true);
 	Font font(Scene::Size().x / 10, Typeface::Bold);
-	const Audio audioCorrect = Audio(Resource(U"example/Quiz-Correct_Answer01-1.mp3")));
-	const Audio audioWrong = Audio(Resource(U"example/Quiz-Wrong_Buzzer02-2.mp3")));
+	const Audio audioCorrect = Audio(Resource(U"example/Quiz-Correct_Answer01-1.mp3"));
+	const Audio audioWrong = Audio(Resource(U"example/Quiz-Wrong_Buzzer02-2.mp3"));
 
 	const Array<Array<Array<Audio>>> specialAudios =
 		{
@@ -160,18 +160,20 @@ void Main() {
 				font(score).draw(fontSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize - animeSize));
 
 				if (KeyEnter.down()) {
-					if (isPrime(prime)) {
+					const bool isCorrect = isPrime(prime);
+					if (special) {
+						const int audiosCount = specialAudios[diff][isCorrect].size() - 1;
+						specialAudios[diff][isCorrect][Random<int>(audiosCount)].playOneShot();
+					}
+
+					if (isCorrect) {
 						effect.add<Spark>(Vec2{ Scene::Size().x / 2, Scene::Size().y / 3 });
 						audioCorrect.playOneShot();
-						const int audiosCount = specialAudios[diff][1].size() - 1;
-						if (special) specialAudios[diff][1][Random<int>(audiosCount)].playOneShot();
 						score += 10;
 						break;
 					}
 					else {
 						audioWrong.playOneShot();
-						const int audiosCount = specialAudios[diff][0].size() - 1;
-						if (special) specialAudios[diff][0][Random<int>(audiosCount)].playOneShot();
 						vibration += defaultVibration * 10;
 						leftVibration = tmp.sF();
 						score -= 10;
