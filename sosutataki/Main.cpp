@@ -46,42 +46,44 @@ int64 pow10(int n) {
 }
 
 void nextPrime(int64& prime, int diff) {
+	auto prevPrime = prime;
 	auto p = Random<int>(0, 10);
 	auto grothendieck = Random<int>(0, 1000);
 	if (grothendieck <= 5) {
 		prime = 57;
-		return;
 	}
+	else {
+		if (diff == 0) prime = Random<int64>(0, 50);
+		if (diff == 1) prime = Random<int64>(0, 100);
+		if (diff == 2) prime = Random<int64>(100, 1000);
+		if (diff == 3) prime = Random<int64>(1000, 10000);
 
-	if (diff == 0) prime = Random<int64>(0, 50);
-	if (diff == 1) prime = Random<int64>(0, 100);
-	if (diff == 2) prime = Random<int64>(100, 1000);
-	if (diff == 3) prime = Random<int64>(1000, 10000);
-
-	if (p <= 4)
-		while (!isPrime(++prime))
-			;
-	else
-		while (isPrime(++prime) || (2 < diff && !(prime & 1)))
-			;
+		if (p <= 4)
+			while (!isPrime(++prime))
+				;
+		else
+			while (isPrime(++prime) || (2 < diff && !(prime & 1)))
+				;
+	}
+	if (prime == prevPrime) nextPrime(prime, diff);
 }
 
 void Main() {
 	Window::SetFullscreen(true);
 	Font font(Scene::Size().x / 10, Typeface::Bold);
-	const Audio audioCorrect = Audio(Resource(U"example/Quiz-Correct_Answer01-1.mp3"));
-	const Audio audioWrong = Audio(Resource(U"example/Quiz-Wrong_Buzzer02-2.mp3"));
+	const Audio audioCorrect = Audio(Resource(U"example/Quiz-Correct_Answer01-1.mp3")));
+	const Audio audioWrong = Audio(Resource(U"example/Quiz-Wrong_Buzzer02-2.mp3")));
 
 	const Array<Array<Array<Audio>>> specialAudios =
-	{
-		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/oyaganaiteruyo.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		 {Audio(Resource(U"example/dekiteatarimae.mp3"))}},
-		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/konnnanomodekinaino.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		 {Audio(Resource(U"example/dekiteatarimae.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))}},
-		{{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		 {Audio(Resource(U"example/yaruyan.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))}},
-		{{Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
-		 {Audio(Resource(U"example/kimihanpanaitte.mp3")), Audio(Resource(U"example/yaruyan.mp3"))}} };
+		{
+			  {{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/oyaganaiteruyo.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+			   {Audio(Resource(U"example/dekiteatarimae.mp3"))}},
+			  {{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/konnnanomodekinaino.mp3")), Audio(Resource(U"example/dasa.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))},
+			   {Audio(Resource(U"example/dekiteatarimae.mp3")), Audio(Resource(U"example/yaruyan.mp3"))}},
+			  {{Audio(Resource(U"example/sosunigate.mp3")), Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3")), Audio(Resource(U"example/maakonnnamonka.mp3"))},
+			   {Audio(Resource(U"example/kimihanpanaitte.mp3")), Audio(Resource(U"example/yaruyan.mp3"))}},
+			  {{Audio(Resource(U"example/kiminidekiruwakenai.mp3")), Audio(Resource(U"example/dasa.mp3"))},
+			   {Audio(Resource(U"example/kimihanpanaitte.mp3")), Audio(Resource(U"example/yaruyan.mp3"))}} };
 
 	const Array<StringView> diffs = { U"EASY", U"NORMAL", U"HARD", U"INSANE" };
 
