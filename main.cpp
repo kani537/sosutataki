@@ -158,17 +158,19 @@ void Main() {
         font(score).draw(fontSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize - animeSize));
 
         if (KeyEnter.down()) {
-          if (isPrime(prime)) {
+          const bool isCorrect = isPrime(prime);
+          if (special) {
+            const int audiosCount = specialAudios[diff][isCorrect].size() - 1;
+            specialAudios[diff][isCorrect][Random<int>(audiosCount)].playOneShot();
+          }
+
+          if (isCorrect) {
             effect.add<Spark>(Vec2{Scene::Size().x / 2, Scene::Size().y / 3});
             audioCorrect.playOneShot();
-            const int audiosCount = specialAudios[diff][1].size() - 1;
-            if (special) specialAudios[diff][1][Random<int>(audiosCount)].playOneShot();
             score += 10;
             break;
           } else {
             audioWrong.playOneShot();
-            const int audiosCount = specialAudios[diff][0].size() - 1;
-            if (special) specialAudios[diff][0][Random<int>(audiosCount)].playOneShot();
             vibration += defaultVibration * 10;
             leftVibration = tmp.sF();
             score -= 10;
