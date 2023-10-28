@@ -46,24 +46,25 @@ int64 pow10(int n) {
 }
 
 void nextPrime(int64 &prime, int diff) {
+  auto prevPrime = prime;
   auto p = Random<int>(0, 10);
   auto grothendieck = Random<int>(0, 1000);
   if (grothendieck <= 5) {
     prime = 57;
-    return;
+  } else {
+    if (diff == 0) prime = Random<int64>(0, 50);
+    if (diff == 1) prime = Random<int64>(0, 100);
+    if (diff == 2) prime = Random<int64>(100, 1000);
+    if (diff == 3) prime = Random<int64>(1000, 10000);
+
+    if (p <= 4)
+      while (!isPrime(++prime))
+        ;
+    else
+      while (isPrime(++prime) || (2 < diff && !(prime & 1)))
+        ;
   }
-
-  if (diff == 0) prime = Random<int64>(0, 50);
-  if (diff == 1) prime = Random<int64>(0, 100);
-  if (diff == 2) prime = Random<int64>(100, 1000);
-  if (diff == 3) prime = Random<int64>(1000, 10000);
-
-  if (p <= 4)
-    while (!isPrime(++prime))
-      ;
-  else
-    while (isPrime(++prime) || (2 < diff && !(prime & 1)))
-      ;
+  if (prime == prevPrime) nextPrime(prime, diff);
 }
 
 void Main() {
@@ -76,10 +77,10 @@ void Main() {
       {
           {{Audio(U"./sosunigate.mp3"), Audio(U"./oyaganaiteruyo.mp3"), Audio(U"./dasa.mp3")},
            {Audio(U"./dekiteatarimae.mp3")}},
-          {{Audio(U"./sosunigate.mp3"), Audio(U"./konnnanomodekinaino.mp3"), Audio(U"./dasa.mp3")},
-           {Audio(U"./dekiteatarimae.mp3"), Audio(U"./maakonnnamonka.mp3")}},
-          {{Audio(U"./sosunigate.mp3"), Audio(U"./kiminidekiruwakenai.mp3"), Audio(U"./dasa.mp3")},
-           {Audio(U"./yaruyan.mp3"), Audio(U"./maakonnnamonka.mp3")}},
+          {{Audio(U"./sosunigate.mp3"), Audio(U"./konnnanomodekinaino.mp3"), Audio(U"./dasa.mp3"), Audio(U"./maakonnnamonka.mp3")},
+           {Audio(U"./dekiteatarimae.mp3"), Audio(U"./yaruyan.mp3")}},
+          {{Audio(U"./sosunigate.mp3"), Audio(U"./kiminidekiruwakenai.mp3"), Audio(U"./dasa.mp3"), Audio(U"./maakonnnamonka.mp3")},
+           {Audio(U"./kimihanpanaitte.mp3"), Audio(U"./yaruyan.mp3")}},
           {{Audio(U"./kiminidekiruwakenai.mp3"), Audio(U"./dasa.mp3")},
            {Audio(U"./kimihanpanaitte.mp3"), Audio(U"./yaruyan.mp3")}}};
 
@@ -99,7 +100,7 @@ void Main() {
   INIT:
     ClearPrint();
     special = false;
-	  Scene::SetBackground(Scene::DefaultBackgroundColor);
+    Scene::SetBackground(Scene::DefaultBackgroundColor);
     while (System::Update()) {
       fontSize = Scene::Size().x / 30;
 
