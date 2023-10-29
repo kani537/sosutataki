@@ -127,10 +127,12 @@ void Main() {
     }
     Stopwatch stopwatch{StartImmediately::Yes};
     score = 0;
-    if (diff < 2)
-      onePrimeTime = 3;
-    else if (diff < 4)
-      onePrimeTime = 3;
+		if (diff < 2)
+			onePrimeTime = 3;
+		else if (diff < 3)
+			onePrimeTime = 4;
+		else if (diff < 4)
+			onePrimeTime = 5;
     leftTime = gameTime;
     nextPrime(prime, diff);
 
@@ -152,7 +154,7 @@ void Main() {
         Rect(0, 0, progress * Scene::Size().x, 10).draw(HSV{120 - 120 * (1. - progress), 0.6, 0.8});
         fontSize = Scene::Size().x / ((diff + 10) / 2);
         double animeSize = sin(stopwatch.sF() * 5) * vibration;
-        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), fontSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * 40, 0.8, 0.7});
+        Circle(Arg::center(Scene::Size().x / 2, Scene::Size().y / 3), fontSize / 1.2).drawArc(tmp.sF() * (360_deg / onePrimeTime), 360_deg - tmp.sF() * (360_deg / onePrimeTime), 0, Scene::Size().x / 80., HSV{120 - tmp.sF() * (120 / onePrimeTime), 0.8, 0.7});
         font(prime).draw(fontSize + animeSize, Arg::center(Scene::Size().x / 2, Scene::Size().y / 3));
         font(U"score").draw((fontSize - animeSize) / 5, Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize / 2.));
         font(score).draw(fontSize / 2., Arg::center(Scene::Size().x / 2, Scene::Size().y / 2. + fontSize - animeSize));
