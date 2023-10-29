@@ -129,12 +129,10 @@ void Main() {
 		}
 		Stopwatch stopwatch{ StartImmediately::Yes };
 		score = 0;
-		if (diff < 2)
+		if (diff < 3)
 			onePrimeTime = 3;
-		else if (diff < 3)
-			onePrimeTime = 4;
 		else if (diff < 4)
-			onePrimeTime = 5;
+			onePrimeTime = 4;
 		leftTime = gameTime;
 		nextPrime(prime, diff);
 
